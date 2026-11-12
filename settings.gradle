@@ -1,0 +1,11 @@
+pluginManagement {
+    repositories {
+        maven { url 'https://maven.fabricmc.net/' }
+        gradlePluginPortal()
+    }
+    plugins {
+        id 'fabric-loom' version '1.9.2'
+    }
+}
+
+rootProject.name = 'visualsfabric'

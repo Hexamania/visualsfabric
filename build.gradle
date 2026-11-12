@@ -1,0 +1,52 @@
+plugins {
+    id 'fabric-loom' version '1.9.2'
+    id 'maven-publish'
+}
+
+group = 'com.visualsfabric'
+version = '1.0.0'
+
+loom {
+    // Configure runs
+    getRunConfigs().each { config ->
+        config.runDir = project.file('run')
+        config.property 'fabric.dli.config', '27'
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    // Fabric API - use version compatible with Loom 1.9.2
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.109.0+1.21.1"
+    modImplementation "org.jetbrains.kotlin:kotlin-stdlib:${project.kotlin_version}"
+}
+
+repositories {
+    maven { url 'https://maven.fabricmc.net/' }
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = 'UTF-8'
+    it.options.release = 21
+}
+
+tasks.named('remapJar') {
+    dependsOn 'jar'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
