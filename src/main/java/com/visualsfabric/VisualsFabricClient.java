@@ -113,6 +113,12 @@ public class VisualsFabricClient implements ClientModInitializer {
     // New: Color Grading Presets
     public static int colorGradingPreset = 0; // 0=Custom, 1=Cinematic, 2=Vibrant, 3=Moody, 4=Retro, 5=Noir, 6=Sepia
 
+    // New: Biome-specific Color Grading
+    public static boolean biomeColorGradingEnabled = true;
+    public static float biomeColorGradingIntensity = 0.5f;
+    public static boolean biomeColorGradingSmoothTransitions = true;
+    public static float biomeColorGradingTransitionSpeed = 2.0f;
+
     // New: Speed Lines
     public static boolean speedLinesEnabled = true;
     public static float speedLinesThreshold = 0.3f;
@@ -138,6 +144,29 @@ public class VisualsFabricClient implements ClientModInitializer {
     public static float contrast = 1.05f;
     public static float brightness = 1.0f;
     public static float gamma = 1.0f;
+
+    // New: God Rays / Volumetric Lighting
+    public static boolean godRaysEnabled = true;
+    public static float godRaysIntensity = 0.5f;
+    public static float godRaysDensity = 0.8f;
+    public static float godRaysDecay = 0.95f;
+    public static float godRaysWeight = 0.4f;
+    public static float godRaysExposure = 0.3f;
+    public static int godRaysNumSamples = 32;
+
+    // New: Lens Flare
+    public static boolean lensFlareEnabled = true;
+    public static float lensFlareIntensity = 0.5f;
+    public static float lensFlareThreshold = 0.9f;
+    public static int lensFlareGhosts = 5;
+    public static boolean lensFlareHaloEnabled = true;
+    public static float lensFlareHaloIntensity = 0.3f;
+    public static boolean lensFlareChromaticAberration = true;
+    public static float lensFlareChromaticIntensity = 0.015f;
+    public static int lensFlareGhostCountMin = 3;
+    public static int lensFlareGhostCountMax = 8;
+    public static float lensFlareRotationSpeed = 0.5f;
+    public static boolean lensFlareAnamorphic = false;
 
     // Sky Intensities
     public static float starBrightness = 1.0f;
@@ -211,6 +240,9 @@ public class VisualsFabricClient implements ClientModInitializer {
     public static KeyBinding togglePhotoModeKey;
     public static KeyBinding cycleColorPresetKey;
     public static KeyBinding cycleCrosshairStyleKey;
+    // New: Biome Color Grading
+    public static KeyBinding toggleBiomeColorGradingKey;
+    public static KeyBinding cycleBiomeColorIntensityKey;
 
     @Override
     public void onInitializeClient() {
@@ -252,6 +284,9 @@ public class VisualsFabricClient implements ClientModInitializer {
         togglePhotoModeKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_photo_mode", GLFW.GLFW_KEY_F8, "category.visualsfabric.general"));
         cycleColorPresetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_color_preset", GLFW.GLFW_KEY_Z, "category.visualsfabric.color_grading"));
         cycleCrosshairStyleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_crosshair_style", GLFW.GLFW_KEY_COMMA, "category.visualsfabric.camera"));
+        // New: Biome Color Grading
+        toggleBiomeColorGradingKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_biome_color_grading", GLFW.GLFW_KEY_E, "category.visualsfabric.color_grading"));
+        cycleBiomeColorIntensityKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_biome_color_intensity", GLFW.GLFW_KEY_Q, "category.visualsfabric.color_grading"));
     }
 
     private void registerTickEvents() {
@@ -304,6 +339,9 @@ public class VisualsFabricClient implements ClientModInitializer {
             while (togglePhotoModeKey.wasPressed()) { photoModeEnabled = !photoModeEnabled; sendChatFeedback("Photo Mode", photoModeEnabled); }
             while (cycleColorPresetKey.wasPressed()) { colorGradingPreset = (colorGradingPreset + 1) % 7; applyColorPreset(); sendChatFeedback("Color Preset", getPresetName(colorGradingPreset)); }
             while (cycleCrosshairStyleKey.wasPressed()) { crosshairStyle = (crosshairStyle + 1) % 5; sendChatFeedback("Crosshair Style", getCrosshairStyleName(crosshairStyle)); }
+            // New: Biome Color Grading
+            while (toggleBiomeColorGradingKey.wasPressed()) { biomeColorGradingEnabled = !biomeColorGradingEnabled; sendChatFeedback("Biome Color Grading", biomeColorGradingEnabled); }
+            while (cycleBiomeColorIntensityKey.wasPressed()) { biomeColorGradingIntensity = (biomeColorGradingIntensity + 0.25f) % 1.25f; if (biomeColorGradingIntensity < 0.25f) biomeColorGradingIntensity = 0.25f; sendChatFeedback("Biome Color Intensity", String.format("%.2f", biomeColorGradingIntensity)); }
         });
     }
 
@@ -427,6 +465,7 @@ public class VisualsFabricClient implements ClientModInitializer {
         if (depthOfFieldEnabled && !performanceMode) applyDepthOfField(tickDelta);
         if (motionBlurEnabled && !performanceMode) applyMotionBlur();
         if (colorGradingEnabled) applyColorGrading();
+        if (biomeColorGradingEnabled && (!performanceMode || !lowQualityShaders)) applyBiomeColorGrading(tickDelta);
         postProcessFramebuffer.endRead();
         client.getFramebuffer().beginWrite(true);
         blitFramebuffer(postProcessFramebuffer, client.getFramebuffer());
@@ -890,6 +929,11 @@ public class VisualsFabricClient implements ClientModInitializer {
     public static boolean isPhotoModeEnabled() { return photoModeEnabled; }
     public static int getColorGradingPreset() { return colorGradingPreset; }
     public static int getCrosshairStyle() { return crosshairStyle; }
+    // New: Biome Color Grading getters
+    public static boolean isBiomeColorGradingEnabled() { return biomeColorGradingEnabled; }
+    public static float getBiomeColorGradingIntensity() { return biomeColorGradingIntensity; }
+    public static boolean isBiomeColorGradingSmoothTransitionsEnabled() { return biomeColorGradingSmoothTransitions; }
+    public static float getBiomeColorGradingTransitionSpeed() { return biomeColorGradingTransitionSpeed; }
 }
 
 class VisualsFabricResourceReloadListener implements IdentifiableResourceReloadListener {
