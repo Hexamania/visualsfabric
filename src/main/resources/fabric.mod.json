@@ -10,7 +10,6 @@
     "sources": "https://github.com/Hexamania/visualsfabric"
   },
   "license": "MIT",
-  "icon": "assets/visualsfabric/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
