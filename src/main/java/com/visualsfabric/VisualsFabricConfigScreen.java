@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 public class VisualsFabricConfigScreen extends Screen {
     private static final String[] CATEGORIES = {
-        "visuals", "sky", "spotify", "hitkill", "performance", "keybindings"
+        "visuals", "sky", "spotify", "hitkill", "camera", "world", "color_grading", "performance", "keybindings"
     };
 
     private final Screen parent;
@@ -53,6 +53,9 @@ public class VisualsFabricConfigScreen extends Screen {
             case "sky" -> addSkyWidgets(startY, centerX);
             case "spotify" -> addSpotifyWidgets(startY, centerX);
             case "hitkill" -> addHitKillWidgets(startY, centerX);
+            case "camera" -> addCameraWidgets(startY, centerX);
+            case "world" -> addWorldWidgets(startY, centerX);
+            case "color_grading" -> addColorGradingWidgets(startY, centerX);
             case "performance" -> addPerformanceWidgets(startY, centerX);
             case "keybindings" -> addKeybindWidgets(startY, centerX);
         }
@@ -67,7 +70,7 @@ public class VisualsFabricConfigScreen extends Screen {
     private void addCategoryTabs() {
         int centerX = width / 2;
         int startY = 40;
-        int categoryWidth = 140;
+        int categoryWidth = 130;
         int categoryHeight = 28;
         int spacing = 4;
 
@@ -140,6 +143,60 @@ public class VisualsFabricConfigScreen extends Screen {
         addToggle("gui.visualsfabric.kill_screen_flash", () -> VisualsFabricClient.killScreenFlashEnabled, v -> VisualsFabricClient.killScreenFlashEnabled = v);
         addSlider("gui.visualsfabric.kill_intensity", () -> VisualsFabricClient.killEffectIntensity, v -> VisualsFabricClient.killEffectIntensity = v, 0.0f, 2.0f, 0.1f);
         addSlider("gui.visualsfabric.kill_screen_flash_intensity", () -> VisualsFabricClient.killScreenFlashIntensity, v -> VisualsFabricClient.killScreenFlashIntensity = v, 0.0f, 1.0f, 0.05f);
+        addToggle("gui.visualsfabric.damage_indicators", () -> VisualsFabricClient.damageIndicatorsEnabled, v -> VisualsFabricClient.damageIndicatorsEnabled = v);
+        addToggle("gui.visualsfabric.damage_numbers", () -> VisualsFabricClient.damageNumbersEnabled, v -> VisualsFabricClient.damageNumbersEnabled = v);
+        addSlider("gui.visualsfabric.damage_indicator_duration", () -> VisualsFabricClient.damageIndicatorDuration, v -> VisualsFabricClient.damageIndicatorDuration = v, 0.5f, 5.0f, 0.1f);
+        addSlider("gui.visualsfabric.damage_indicator_size", () -> VisualsFabricClient.damageIndicatorSize, v -> VisualsFabricClient.damageIndicatorSize = v, 0.5f, 2.0f, 0.1f);
+    }
+
+    private void addCameraWidgets(int startY, int centerX) {
+        addToggle("gui.visualsfabric.dynamic_fov", () -> VisualsFabricClient.dynamicFovEnabled, v -> VisualsFabricClient.dynamicFovEnabled = v);
+        addToggle("gui.visualsfabric.sprint_fov_boost", () -> VisualsFabricClient.sprintFovBoost, v -> VisualsFabricClient.sprintFovBoost = v);
+        addSlider("gui.visualsfabric.sprint_fov_amount", () -> VisualsFabricClient.sprintFovAmount, v -> VisualsFabricClient.sprintFovAmount = v, 0.0f, 30.0f, 1.0f);
+        addToggle("gui.visualsfabric.elytra_fov_boost", () -> VisualsFabricClient.elytraFovBoost, v -> VisualsFabricClient.elytraFovBoost = v);
+        addSlider("gui.visualsfabric.elytra_fov_amount", () -> VisualsFabricClient.elytraFovAmount, v -> VisualsFabricClient.elytraFovAmount = v, 0.0f, 50.0f, 1.0f);
+        addToggle("gui.visualsfabric.speed_fov", () -> VisualsFabricClient.speedFovEnabled, v -> VisualsFabricClient.speedFovEnabled = v);
+        addSlider("gui.visualsfabric.speed_fov_multiplier", () -> VisualsFabricClient.speedFovMultiplier, v -> VisualsFabricClient.speedFovMultiplier = v, 0.0f, 5.0f, 0.1f);
+        addSlider("gui.visualsfabric.base_fov", () -> VisualsFabricClient.baseFov, v -> VisualsFabricClient.baseFov = v, 30.0f, 110.0f, 1.0f);
+
+        addToggle("gui.visualsfabric.custom_crosshair", () -> VisualsFabricClient.customCrosshairEnabled, v -> VisualsFabricClient.customCrosshairEnabled = v);
+        addCycleButton("gui.visualsfabric.crosshair_style", () -> VisualsFabricClient.crosshairStyle, v -> VisualsFabricClient.crosshairStyle = v, 5);
+        addSlider("gui.visualsfabric.crosshair_size", () -> VisualsFabricClient.crosshairSize, v -> VisualsFabricClient.crosshairSize = v, 0.5f, 3.0f, 0.1f);
+        addSlider("gui.visualsfabric.crosshair_gap", () -> VisualsFabricClient.crosshairGap, v -> VisualsFabricClient.crosshairGap = v, 0.0f, 20.0f, 1.0f);
+        addSlider("gui.visualsfabric.crosshair_thickness", () -> VisualsFabricClient.crosshairThickness, v -> VisualsFabricClient.crosshairThickness = v, 0.5f, 5.0f, 0.1f);
+        addSlider("gui.visualsfabric.crosshair_color_r", () -> VisualsFabricClient.crosshairColorR, v -> VisualsFabricClient.crosshairColorR = v, 0.0f, 1.0f, 0.05f);
+        addSlider("gui.visualsfabric.crosshair_color_g", () -> VisualsFabricClient.crosshairColorG, v -> VisualsFabricClient.crosshairColorG = v, 0.0f, 1.0f, 0.05f);
+        addSlider("gui.visualsfabric.crosshair_color_b", () -> VisualsFabricClient.crosshairColorB, v -> VisualsFabricClient.crosshairColorB = v, 0.0f, 1.0f, 0.05f);
+        addSlider("gui.visualsfabric.crosshair_color_a", () -> VisualsFabricClient.crosshairColorA, v -> VisualsFabricClient.crosshairColorA = v, 0.0f, 1.0f, 0.05f);
+        addToggle("gui.visualsfabric.crosshair_dynamic", () -> VisualsFabricClient.crosshairDynamic, v -> VisualsFabricClient.crosshairDynamic = v);
+
+        addToggle("gui.visualsfabric.speed_lines", () -> VisualsFabricClient.speedLinesEnabled, v -> VisualsFabricClient.speedLinesEnabled = v);
+        addSlider("gui.visualsfabric.speed_lines_threshold", () -> VisualsFabricClient.speedLinesThreshold, v -> VisualsFabricClient.speedLinesThreshold = v, 0.0f, 1.0f, 0.05f);
+        addSlider("gui.visualsfabric.speed_lines_intensity", () -> VisualsFabricClient.speedLinesIntensity, v -> VisualsFabricClient.speedLinesIntensity = v, 0.0f, 2.0f, 0.1f);
+
+        addToggle("gui.visualsfabric.photo_mode", () -> VisualsFabricClient.photoModeEnabled, v -> VisualsFabricClient.photoModeEnabled = v);
+        addToggle("gui.visualsfabric.photo_mode_hide_hud", () -> VisualsFabricClient.photoModeHideHud, v -> VisualsFabricClient.photoModeHideHud = v);
+        addToggle("gui.visualsfabric.photo_mode_freeze_time", () -> VisualsFabricClient.photoModeFreezeTime, v -> VisualsFabricClient.photoModeFreezeTime = v);
+    }
+
+    private void addWorldWidgets(int startY, int centerX) {
+        addToggle("gui.visualsfabric.weather_enhanced", () -> VisualsFabricClient.weatherEnhanced, v -> VisualsFabricClient.weatherEnhanced = v);
+        addSlider("gui.visualsfabric.rain_intensity", () -> VisualsFabricClient.rainIntensity, v -> VisualsFabricClient.rainIntensity = v, 0.0f, 2.0f, 0.1f);
+        addSlider("gui.visualsfabric.snow_intensity", () -> VisualsFabricClient.snowIntensity, v -> VisualsFabricClient.snowIntensity = v, 0.0f, 2.0f, 0.1f);
+        addSlider("gui.visualsfabric.fog_density", () -> VisualsFabricClient.fogDensity, v -> VisualsFabricClient.fogDensity = v, 0.0f, 3.0f, 0.1f);
+        addToggle("gui.visualsfabric.fog_color", () -> VisualsFabricClient.fogColorEnabled, v -> VisualsFabricClient.fogColorEnabled = v);
+
+        addToggle("gui.visualsfabric.water_caustics", () -> VisualsFabricClient.waterCausticsEnabled, v -> VisualsFabricClient.waterCausticsEnabled = v);
+        addSlider("gui.visualsfabric.caustics_intensity", () -> VisualsFabricClient.causticsIntensity, v -> VisualsFabricClient.causticsIntensity = v, 0.0f, 1.0f, 0.05f);
+        addSlider("gui.visualsfabric.caustics_speed", () -> VisualsFabricClient.causticsSpeed, v -> VisualsFabricClient.causticsSpeed = v, 0.0f, 5.0f, 0.1f);
+    }
+
+    private void addColorGradingWidgets(int startY, int centerX) {
+        addCycleButton("gui.visualsfabric.color_preset", () -> VisualsFabricClient.colorGradingPreset, v -> VisualsFabricClient.colorGradingPreset = v, 7);
+        addSlider("gui.visualsfabric.saturation", () -> VisualsFabricClient.saturation, v -> VisualsFabricClient.saturation = v, 0.0f, 2.0f, 0.05f);
+        addSlider("gui.visualsfabric.contrast", () -> VisualsFabricClient.contrast, v -> VisualsFabricClient.contrast = v, 0.0f, 2.0f, 0.05f);
+        addSlider("gui.visualsfabric.brightness", () -> VisualsFabricClient.brightness, v -> VisualsFabricClient.brightness = v, 0.0f, 2.0f, 0.05f);
+        addSlider("gui.visualsfabric.gamma", () -> VisualsFabricClient.gamma, v -> VisualsFabricClient.gamma = v, 0.5f, 2.0f, 0.05f);
     }
 
     private void addPerformanceWidgets(int startY, int centerX) {
@@ -167,6 +224,16 @@ public class VisualsFabricConfigScreen extends Screen {
         addKeybind("key.visualsfabric.toggle_hit_effects", VisualsFabricClient.toggleHitEffectsKey);
         addKeybind("key.visualsfabric.toggle_kill_effects", VisualsFabricClient.toggleKillEffectsKey);
         addKeybind("key.visualsfabric.toggle_performance_mode", VisualsFabricClient.togglePerformanceModeKey);
+        // New keybinds
+        addKeybind("key.visualsfabric.toggle_dynamic_fov", VisualsFabricClient.toggleDynamicFovKey);
+        addKeybind("key.visualsfabric.toggle_damage_indicators", VisualsFabricClient.toggleDamageIndicatorsKey);
+        addKeybind("key.visualsfabric.toggle_crosshair", VisualsFabricClient.toggleCrosshairKey);
+        addKeybind("key.visualsfabric.toggle_weather", VisualsFabricClient.toggleWeatherEnhancedKey);
+        addKeybind("key.visualsfabric.toggle_caustics", VisualsFabricClient.toggleWaterCausticsKey);
+        addKeybind("key.visualsfabric.toggle_speed_lines", VisualsFabricClient.toggleSpeedLinesKey);
+        addKeybind("key.visualsfabric.toggle_photo_mode", VisualsFabricClient.togglePhotoModeKey);
+        addKeybind("key.visualsfabric.cycle_color_preset", VisualsFabricClient.cycleColorPresetKey);
+        addKeybind("key.visualsfabric.cycle_crosshair_style", VisualsFabricClient.cycleCrosshairStyleKey);
     }
 
     private int nextY = 80;
@@ -188,6 +255,30 @@ public class VisualsFabricConfigScreen extends Screen {
         SliderWidget slider = new SliderWidget(width / 2 - 150, y, 300, 20, Text.translatable(key), getter, setter, min, max, step);
         sliders.add(slider);
         addDrawableChild(slider);
+    }
+
+    private void addCycleButton(String key, Supplier<Integer> getter, Consumer<Integer> setter, int maxValue) {
+        int y = nextY;
+        nextY += 28;
+        ButtonWidget button = ButtonWidget.builder(Text.translatable(key), btn -> {
+            int newVal = (getter.get() + 1) % maxValue;
+            setter.accept(newVal);
+            btn.setMessage(Text.literal(getOptionName(key, newVal)));
+        }).dimensions(width / 2 - 150, y, 300, 20).build();
+        button.setMessage(Text.literal(getOptionName(key, getter.get())));
+        addDrawableChild(button);
+    }
+
+    private String getOptionName(String key, int value) {
+        return switch (key) {
+            case "gui.visualsfabric.crosshair_style" -> switch (value) {
+                case 0 -> "Default"; case 1 -> "Dot"; case 2 -> "Cross"; case 3 -> "Circle"; case 4 -> "Dynamic"; default -> "Default";
+            };
+            case "gui.visualsfabric.color_preset" -> switch (value) {
+                case 0 -> "Custom"; case 1 -> "Cinematic"; case 2 -> "Vibrant"; case 3 -> "Moody"; case 4 -> "Retro"; case 5 -> "Noir"; case 6 -> "Sepia"; default -> "Custom";
+            };
+            default -> String.valueOf(value);
+        };
     }
 
     private void addKeybind(String key, KeyBinding keyBinding) {
@@ -229,6 +320,38 @@ public class VisualsFabricConfigScreen extends Screen {
         VisualsFabricClient.performanceMode = false;
         VisualsFabricClient.lowQualityShaders = false;
         VisualsFabricClient.reducedParticles = false;
+        // New defaults
+        VisualsFabricClient.dynamicFovEnabled = true;
+        VisualsFabricClient.sprintFovBoost = true;
+        VisualsFabricClient.elytraFovBoost = true;
+        VisualsFabricClient.speedFovEnabled = true;
+        VisualsFabricClient.damageIndicatorsEnabled = true;
+        VisualsFabricClient.damageNumbersEnabled = false;
+        VisualsFabricClient.customCrosshairEnabled = true;
+        VisualsFabricClient.crosshairStyle = 0;
+        VisualsFabricClient.crosshairSize = 1.0f;
+        VisualsFabricClient.crosshairGap = 0f;
+        VisualsFabricClient.crosshairThickness = 1.0f;
+        VisualsFabricClient.crosshairColorR = 1f;
+        VisualsFabricClient.crosshairColorG = 1f;
+        VisualsFabricClient.crosshairColorB = 1f;
+        VisualsFabricClient.crosshairColorA = 0.8f;
+        VisualsFabricClient.crosshairDynamic = false;
+        VisualsFabricClient.weatherEnhanced = true;
+        VisualsFabricClient.rainIntensity = 1.0f;
+        VisualsFabricClient.snowIntensity = 1.0f;
+        VisualsFabricClient.fogDensity = 1.0f;
+        VisualsFabricClient.fogColorEnabled = false;
+        VisualsFabricClient.waterCausticsEnabled = true;
+        VisualsFabricClient.causticsIntensity = 0.5f;
+        VisualsFabricClient.causticsSpeed = 1.0f;
+        VisualsFabricClient.colorGradingPreset = 0;
+        VisualsFabricClient.speedLinesEnabled = true;
+        VisualsFabricClient.speedLinesThreshold = 0.3f;
+        VisualsFabricClient.speedLinesIntensity = 1.0f;
+        VisualsFabricClient.photoModeEnabled = false;
+        VisualsFabricClient.photoModeHideHud = true;
+        VisualsFabricClient.photoModeFreezeTime = false;
 
         VisualsFabricClient.bloomIntensity = 0.6f;
         VisualsFabricClient.bloomThreshold = 0.8f;
@@ -251,6 +374,12 @@ public class VisualsFabricConfigScreen extends Screen {
         VisualsFabricClient.killEffectIntensity = 1.0f;
         VisualsFabricClient.hitScreenFlashIntensity = 0.3f;
         VisualsFabricClient.killScreenFlashIntensity = 0.5f;
+        VisualsFabricClient.sprintFovAmount = 10f;
+        VisualsFabricClient.elytraFovAmount = 20f;
+        VisualsFabricClient.speedFovMultiplier = 1.5f;
+        VisualsFabricClient.baseFov = 70f;
+        VisualsFabricClient.damageIndicatorDuration = 2.0f;
+        VisualsFabricClient.damageIndicatorSize = 1.0f;
 
         nextY = 80;
         rebuildWidgets();
@@ -285,7 +414,6 @@ public class VisualsFabricConfigScreen extends Screen {
                 keybindToRebind = null;
                 return true;
             }
-            // Key rebinding - simplified for now
             waitingForKeybind = false;
             keybindToRebind = null;
             rebuildWidgets();
