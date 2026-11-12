@@ -4,13 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "GameRendererMixin",
-    "WorldRendererMixin",
     "CameraMixin",
     "MinecraftClientMixin"
   ],
   "client": [
     "GameRendererMixin",
-    "WorldRendererMixin",
     "CameraMixin",
     "MinecraftClientMixin"
   ],
