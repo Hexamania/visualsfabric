@@ -1,0 +1,63 @@
+# Gradle
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+gradlew
+gradlew.bat
+gradle-*/
+!gradle/wrapper/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Summary files (as requested)
+*.summary
+summary/
+
+# JAR files (except in build/libs which is needed for artifacts)
+*.jar
+!build/libs/*.jar
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# IntelliJ
+*.iml
+
+# VS Code
+.vscode/
+
+# NetBeans
+nbproject/
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Local config
+local.properties
+gradle.properties.local

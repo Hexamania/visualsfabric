@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "visualsfabric",
+  "version": "1.0.0",
+  "name": "VisualsFabric",
+  "description": "An optimized Fabric 26.3/1.21.4 mod purely for visuals - shaders, rendering enhancements, and visual effects",
+  "authors": ["Hexamania"],
+  "contact": {
+    "homepage": "https://github.com/Hexamania/visualsfabric",
+    "sources": "https://github.com/Hexamania/visualsfabric"
+  },
+  "license": "MIT",
+  "icon": "assets/visualsfabric/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.visualsfabric.VisualsFabricClient"
+    ],
+    "main": [
+      "com.visualsfabric.VisualsFabric"
+    ]
+  },
+  "mixins": [
+    "visualsfabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.20.1",
+    "minecraft": ">=1.21.4 <=1.21.99",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "discord": "https://discord.gg/fabric",
+        "github": "https://github.com/Hexamania/visualsfabric"
+      }
+    }
+  }
+}
