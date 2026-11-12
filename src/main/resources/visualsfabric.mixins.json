@@ -5,12 +5,14 @@
   "mixins": [
     "GameRendererMixin",
     "WorldRendererMixin",
-    "CameraMixin"
+    "CameraMixin",
+    "MinecraftClientMixin"
   ],
   "client": [
     "GameRendererMixin",
     "WorldRendererMixin",
-    "CameraMixin"
+    "CameraMixin",
+    "MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

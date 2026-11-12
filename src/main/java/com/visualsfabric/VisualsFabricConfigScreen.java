@@ -1,26 +1,30 @@
 package com.visualsfabric;
 
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.Colors;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class VisualsFabricConfigScreen extends Screen {
-    private static final Identifier BACKGROUND_TEXTURE = Identifier.of("visualsfabric", "textures/gui/config_background.png");
+    private static final String[] CATEGORIES = {
+        "visuals", "sky", "spotify", "hitkill", "performance", "keybindings"
+    };
+
     private final Screen parent;
-    private List<ConfigEntry> entries = new ArrayList<>();
-    private int contentStartY = 40;
-    private int entryHeight = 24;
-    private int spacing = 4;
+    private int selectedCategory = 0;
+    private boolean waitingForKeybind = false;
+    private KeyBinding keybindToRebind = null;
+    private final List<SliderWidget> sliders = new ArrayList<>();
 
     public VisualsFabricConfigScreen() {
         this(null);
@@ -33,168 +37,174 @@ public class VisualsFabricConfigScreen extends Screen {
 
     @Override
     protected void init() {
+        sliders.clear();
         super.init();
-        entries.clear();
-
-        // Visual Effects Category
-        entries.add(new CategoryEntry(Text.translatable("category.visualsfabric.visuals")));
-
-        entries.add(new ToggleEntry(
-            Text.translatable("gui.visualsfabric.bloom"),
-            VisualsFabricClient::isBloomEnabled,
-            val -> VisualsFabricClient.bloomEnabled = val,
-            () -> VisualsFabricClient.bloomIntensity,
-            val -> VisualsFabricClient.bloomIntensity = val,
-            0.0, 2.0, "%.2f"
-        ));
-
-        entries.add(new ToggleEntry(
-            Text.translatable("gui.visualsfabric.chromatic_aberration"),
-            VisualsFabricClient::isChromaticAberrationEnabled,
-            val -> VisualsFabricClient.chromaticAberrationEnabled = val,
-            () -> VisualsFabricClient.chromaticAberrationIntensity,
-            val -> VisualsFabricClient.chromaticAberrationIntensity = val,
-            0.0, 0.1, "%.3f"
-        ));
-
-        entries.add(new ToggleEntry(
-            Text.translatable("gui.visualsfabric.film_grain"),
-            VisualsFabricClient::isFilmGrainEnabled,
-            val -> VisualsFabricClient.filmGrainEnabled = val,
-            () -> VisualsFabricClient.filmGrainIntensity,
-            val -> VisualsFabricClient.filmGrainIntensity = val,
-            0.0, 1.0, "%.2f"
-        ));
-
-        entries.add(new ToggleEntry(
-            Text.translatable("gui.visualsfabric.vignette"),
-            VisualsFabricClient::isVignetteEnabled,
-            val -> VisualsFabricClient.vignetteEnabled = val,
-            () -> VisualsFabricClient.vignetteIntensity,
-            val -> VisualsFabricClient.vignetteIntensity = val,
-            0.0, 1.0, "%.2f"
-        ));
-
-        entries.add(new ToggleEntry(
-            Text.translatable("gui.visualsfabric.color_grading"),
-            VisualsFabricClient::isColorGradingEnabled,
-            val -> VisualsFabricClient.colorGradingEnabled = val,
-            null, null, 0, 0, null
-        ));
-
-        entries.add(new ToggleEntry(
-            Text.translatable("gui.visualsfabric.depth_of_field"),
-            VisualsFabricClient::isDepthOfFieldEnabled,
-            val -> VisualsFabricClient.depthOfFieldEnabled = val,
-            null, null, 0, 0, null
-        ));
-
-        entries.add(new ToggleEntry(
-            Text.translatable("gui.visualsfabric.motion_blur"),
-            VisualsFabricClient::isMotionBlurEnabled,
-            val -> VisualsFabricClient.motionBlurEnabled = val,
-            null, null, 0, 0, null
-        ));
-
-        entries.add(new ToggleEntry(
-            Text.translatable("gui.visualsfabric.enhanced_ao"),
-            VisualsFabricClient::isAmbientOcclusionEnhanced,
-            val -> VisualsFabricClient.ambientOcclusionEnhanced = val,
-            null, null, 0, 0, null
-        ));
-
-        // Color Grading Category
-        entries.add(new CategoryEntry(Text.translatable("category.visualsfabric.color_grading")));
-
-        entries.add(new SliderOnlyEntry(
-            Text.translatable("gui.visualsfabric.saturation"),
-            () -> VisualsFabricClient.saturation,
-            val -> VisualsFabricClient.saturation = val,
-            0.0, 2.0, "%.2f"
-        ));
-
-        entries.add(new SliderOnlyEntry(
-            Text.translatable("gui.visualsfabric.contrast"),
-            () -> VisualsFabricClient.contrast,
-            val -> VisualsFabricClient.contrast = val,
-            0.0, 2.0, "%.2f"
-        ));
-
-        entries.add(new SliderOnlyEntry(
-            Text.translatable("gui.visualsfabric.brightness"),
-            () -> VisualsFabricClient.brightness,
-            val -> VisualsFabricClient.brightness = val,
-            0.0, 2.0, "%.2f"
-        ));
-
-        entries.add(new SliderOnlyEntry(
-            Text.translatable("gui.visualsfabric.gamma"),
-            () -> VisualsFabricClient.gamma,
-            val -> VisualsFabricClient.gamma = val,
-            0.0, 2.0, "%.2f"
-        ));
-
-        // Key Bindings Category
-        entries.add(new CategoryEntry(Text.translatable("category.visualsfabric.keybindings")));
-
-        entries.add(new KeybindEntry(
-            Text.translatable("gui.visualsfabric.open_config"),
-            VisualsFabricClient.openConfigKey
-        ));
-
-        entries.add(new KeybindEntry(
-            Text.translatable("gui.visualsfabric.toggle_bloom"),
-            VisualsFabricClient.toggleBloomKey
-        ));
-
-        entries.add(new KeybindEntry(
-            Text.translatable("gui.visualsfabric.toggle_chromatic_aberration"),
-            VisualsFabricClient.toggleChromaticAberrationKey
-        ));
-
-        entries.add(new KeybindEntry(
-            Text.translatable("gui.visualsfabric.toggle_film_grain"),
-            VisualsFabricClient.toggleFilmGrainKey
-        ));
-
-        entries.add(new KeybindEntry(
-            Text.translatable("gui.visualsfabric.toggle_vignette"),
-            VisualsFabricClient.toggleVignetteKey
-        ));
-
-        entries.add(new KeybindEntry(
-            Text.translatable("gui.visualsfabric.toggle_color_grading"),
-            VisualsFabricClient.toggleColorGradingKey
-        ));
-
-        entries.add(new KeybindEntry(
-            Text.translatable("gui.visualsfabric.toggle_dof"),
-            VisualsFabricClient.toggleDepthOfFieldKey
-        ));
-
-        entries.add(new KeybindEntry(
-            Text.translatable("gui.visualsfabric.toggle_motion_blur"),
-            VisualsFabricClient.toggleMotionBlurKey
-        ));
-
-        entries.add(new KeybindEntry(
-            Text.translatable("gui.visualsfabric.toggle_ao"),
-            VisualsFabricClient.toggleAOKey
-        ));
-
-        // Buttons
-        int buttonY = contentStartY + entries.size() * (entryHeight + spacing) + 10;
-        int buttonWidth = 100;
-        int centerX = width / 2;
-
-        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.visualsfabric.reset_defaults"), btn -> resetToDefaults())
-            .dimensions(centerX - buttonWidth - 5, buttonY, buttonWidth, 20).build());
-
-        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.visualsfabric.done"), btn -> close())
-            .dimensions(centerX + 5, buttonY, buttonWidth, 20).build());
+        rebuildWidgets();
     }
 
-    private void resetToDefaults() {
+    private void rebuildWidgets() {
+        int startY = 80;
+        int centerX = width / 2;
+
+        addCategoryTabs();
+
+        switch (CATEGORIES[selectedCategory]) {
+            case "visuals" -> addVisualsWidgets(startY, centerX);
+            case "sky" -> addSkyWidgets(startY, centerX);
+            case "spotify" -> addSpotifyWidgets(startY, centerX);
+            case "hitkill" -> addHitKillWidgets(startY, centerX);
+            case "performance" -> addPerformanceWidgets(startY, centerX);
+            case "keybindings" -> addKeybindWidgets(startY, centerX);
+        }
+
+        int btnY = height - 40;
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.visualsfabric.reset_defaults"), btn -> resetDefaults())
+            .dimensions(centerX - 100, btnY, 200, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.visualsfabric.done"), btn -> close())
+            .dimensions(centerX - 100, btnY + 20, 200, 20).build());
+    }
+
+    private void addCategoryTabs() {
+        int centerX = width / 2;
+        int startY = 40;
+        int categoryWidth = 140;
+        int categoryHeight = 28;
+        int spacing = 4;
+
+        for (int i = 0; i < CATEGORIES.length; i++) {
+            final int index = i;
+            int x = centerX - (CATEGORIES.length * (categoryWidth + spacing)) / 2 + i * (categoryWidth + spacing);
+            int y = startY;
+            ButtonWidget button = ButtonWidget.builder(Text.translatable("category.visualsfabric." + CATEGORIES[i]), btn -> {
+                selectedCategory = index;
+                rebuildWidgets();
+            }).dimensions(x, y, categoryWidth, categoryHeight).build();
+            if (index == selectedCategory) button.active = false;
+            addDrawableChild(button);
+        }
+
+        int badgeX = width - 100;
+        int badgeY = 8;
+        addDrawableChild(ButtonWidget.builder(Text.literal("§bAI-Assisted§r"), btn -> {})
+            .dimensions(badgeX, badgeY, 90, 16).build());
+    }
+
+    private void addVisualsWidgets(int startY, int centerX) {
+        addToggle("gui.visualsfabric.bloom", () -> VisualsFabricClient.bloomEnabled, v -> VisualsFabricClient.bloomEnabled = v);
+        addSlider("gui.visualsfabric.intensity", () -> VisualsFabricClient.bloomIntensity, v -> VisualsFabricClient.bloomIntensity = v, 0.0f, 2.0f, 0.05f);
+        addToggle("gui.visualsfabric.chromatic_aberration", () -> VisualsFabricClient.chromaticAberrationEnabled, v -> VisualsFabricClient.chromaticAberrationEnabled = v);
+        addSlider("gui.visualsfabric.intensity", () -> VisualsFabricClient.chromaticAberrationIntensity, v -> VisualsFabricClient.chromaticAberrationIntensity = v, 0.0f, 0.1f, 0.005f);
+        addToggle("gui.visualsfabric.film_grain", () -> VisualsFabricClient.filmGrainEnabled, v -> VisualsFabricClient.filmGrainEnabled = v);
+        addSlider("gui.visualsfabric.intensity", () -> VisualsFabricClient.filmGrainIntensity, v -> VisualsFabricClient.filmGrainIntensity = v, 0.0f, 1.0f, 0.05f);
+        addToggle("gui.visualsfabric.vignette", () -> VisualsFabricClient.vignetteEnabled, v -> VisualsFabricClient.vignetteEnabled = v);
+        addSlider("gui.visualsfabric.intensity", () -> VisualsFabricClient.vignetteIntensity, v -> VisualsFabricClient.vignetteIntensity = v, 0.0f, 1.0f, 0.05f);
+        addToggle("gui.visualsfabric.color_grading", () -> VisualsFabricClient.colorGradingEnabled, v -> VisualsFabricClient.colorGradingEnabled = v);
+        addSlider("gui.visualsfabric.saturation", () -> VisualsFabricClient.saturation, v -> VisualsFabricClient.saturation = v, 0.0f, 2.0f, 0.05f);
+        addSlider("gui.visualsfabric.contrast", () -> VisualsFabricClient.contrast, v -> VisualsFabricClient.contrast = v, 0.0f, 2.0f, 0.05f);
+        addSlider("gui.visualsfabric.brightness", () -> VisualsFabricClient.brightness, v -> VisualsFabricClient.brightness = v, 0.0f, 2.0f, 0.05f);
+        addSlider("gui.visualsfabric.gamma", () -> VisualsFabricClient.gamma, v -> VisualsFabricClient.gamma = v, 0.5f, 2.0f, 0.05f);
+        addToggle("gui.visualsfabric.depth_of_field", () -> VisualsFabricClient.depthOfFieldEnabled, v -> VisualsFabricClient.depthOfFieldEnabled = v);
+        addToggle("gui.visualsfabric.motion_blur", () -> VisualsFabricClient.motionBlurEnabled, v -> VisualsFabricClient.motionBlurEnabled = v);
+        addToggle("gui.visualsfabric.enhanced_ao", () -> VisualsFabricClient.ambientOcclusionEnhanced, v -> VisualsFabricClient.ambientOcclusionEnhanced = v);
+    }
+
+    private void addSkyWidgets(int startY, int centerX) {
+        addToggle("gui.visualsfabric.sky_effects", () -> VisualsFabricClient.skyEffectsEnabled, v -> VisualsFabricClient.skyEffectsEnabled = v);
+        addToggle("gui.visualsfabric.enhanced_sun_moon", () -> VisualsFabricClient.enhancedSunMoon, v -> VisualsFabricClient.enhancedSunMoon = v);
+        addSlider("gui.visualsfabric.sun_moon_scale", () -> VisualsFabricClient.sunMoonScale, v -> VisualsFabricClient.sunMoonScale = v, 0.5f, 3.0f, 0.1f);
+        addToggle("gui.visualsfabric.star_field", () -> VisualsFabricClient.starFieldEnabled, v -> VisualsFabricClient.starFieldEnabled = v);
+        addSlider("gui.visualsfabric.star_brightness", () -> VisualsFabricClient.starBrightness, v -> VisualsFabricClient.starBrightness = v, 0.0f, 2.0f, 0.05f);
+        addSlider("gui.visualsfabric.star_density", () -> VisualsFabricClient.starDensity, v -> VisualsFabricClient.starDensity = v, 0.0f, 2.0f, 0.05f);
+        addToggle("gui.visualsfabric.aurora", () -> VisualsFabricClient.auroraEnabled, v -> VisualsFabricClient.auroraEnabled = v);
+        addSlider("gui.visualsfabric.aurora_intensity", () -> VisualsFabricClient.auroraIntensity, v -> VisualsFabricClient.auroraIntensity = v, 0.0f, 1.0f, 0.05f);
+        addToggle("gui.visualsfabric.sky_color_grading", () -> VisualsFabricClient.skyColorGrading, v -> VisualsFabricClient.skyColorGrading = v);
+        addSlider("gui.visualsfabric.sky_color_intensity", () -> VisualsFabricClient.skyColorIntensity, v -> VisualsFabricClient.skyColorIntensity = v, 0.0f, 1.0f, 0.05f);
+    }
+
+    private void addSpotifyWidgets(int startY, int centerX) {
+        addToggle("gui.visualsfabric.spotify_hud", () -> VisualsFabricClient.spotifyHudEnabled, v -> VisualsFabricClient.spotifyHudEnabled = v);
+        addSlider("gui.visualsfabric.spotify_hud_scale", () -> VisualsFabricClient.spotifyHudScale, v -> VisualsFabricClient.spotifyHudScale = v, 0.5f, 2.0f, 0.1f);
+        addSlider("gui.visualsfabric.spotify_hud_x", () -> VisualsFabricClient.spotifyHudX, v -> VisualsFabricClient.spotifyHudX = v, 0.0f, 1.0f, 0.05f);
+        addSlider("gui.visualsfabric.spotify_hud_y", () -> VisualsFabricClient.spotifyHudY, v -> VisualsFabricClient.spotifyHudY = v, 0.0f, 1.0f, 0.05f);
+        addToggle("gui.visualsfabric.spotify_lyrics_in_sky", () -> VisualsFabricClient.spotifyLyricsInSky, v -> VisualsFabricClient.spotifyLyricsInSky = v);
+    }
+
+    private void addHitKillWidgets(int startY, int centerX) {
+        addToggle("gui.visualsfabric.hit_effects", () -> VisualsFabricClient.hitEffectsEnabled, v -> VisualsFabricClient.hitEffectsEnabled = v);
+        addToggle("gui.visualsfabric.hit_particles", () -> VisualsFabricClient.hitParticlesEnabled, v -> VisualsFabricClient.hitParticlesEnabled = v);
+        addToggle("gui.visualsfabric.hit_screen_flash", () -> VisualsFabricClient.hitScreenFlashEnabled, v -> VisualsFabricClient.hitScreenFlashEnabled = v);
+        addSlider("gui.visualsfabric.hit_intensity", () -> VisualsFabricClient.hitEffectIntensity, v -> VisualsFabricClient.hitEffectIntensity = v, 0.0f, 2.0f, 0.1f);
+        addSlider("gui.visualsfabric.hit_screen_flash_intensity", () -> VisualsFabricClient.hitScreenFlashIntensity, v -> VisualsFabricClient.hitScreenFlashIntensity = v, 0.0f, 1.0f, 0.05f);
+        addToggle("gui.visualsfabric.kill_effects", () -> VisualsFabricClient.killEffectsEnabled, v -> VisualsFabricClient.killEffectsEnabled = v);
+        addToggle("gui.visualsfabric.kill_particles", () -> VisualsFabricClient.killParticlesEnabled, v -> VisualsFabricClient.killParticlesEnabled = v);
+        addToggle("gui.visualsfabric.kill_screen_flash", () -> VisualsFabricClient.killScreenFlashEnabled, v -> VisualsFabricClient.killScreenFlashEnabled = v);
+        addSlider("gui.visualsfabric.kill_intensity", () -> VisualsFabricClient.killEffectIntensity, v -> VisualsFabricClient.killEffectIntensity = v, 0.0f, 2.0f, 0.1f);
+        addSlider("gui.visualsfabric.kill_screen_flash_intensity", () -> VisualsFabricClient.killScreenFlashIntensity, v -> VisualsFabricClient.killScreenFlashIntensity = v, 0.0f, 1.0f, 0.05f);
+    }
+
+    private void addPerformanceWidgets(int startY, int centerX) {
+        addToggle("gui.visualsfabric.performance_mode", () -> VisualsFabricClient.performanceMode, v -> VisualsFabricClient.performanceMode = v);
+        addToggle("gui.visualsfabric.low_quality_shaders", () -> VisualsFabricClient.lowQualityShaders, v -> VisualsFabricClient.lowQualityShaders = v);
+        addToggle("gui.visualsfabric.reduced_particles", () -> VisualsFabricClient.reducedParticles, v -> VisualsFabricClient.reducedParticles = v);
+    }
+
+    private void addKeybindWidgets(int startY, int centerX) {
+        addKeybind("key.visualsfabric.open_config", VisualsFabricClient.openConfigKey);
+        addKeybind("key.visualsfabric.toggle_bloom", VisualsFabricClient.toggleBloomKey);
+        addKeybind("key.visualsfabric.toggle_chromatic_aberration", VisualsFabricClient.toggleChromaticAberrationKey);
+        addKeybind("key.visualsfabric.toggle_film_grain", VisualsFabricClient.toggleFilmGrainKey);
+        addKeybind("key.visualsfabric.toggle_vignette", VisualsFabricClient.toggleVignetteKey);
+        addKeybind("key.visualsfabric.toggle_color_grading", VisualsFabricClient.toggleColorGradingKey);
+        addKeybind("key.visualsfabric.toggle_dof", VisualsFabricClient.toggleDepthOfFieldKey);
+        addKeybind("key.visualsfabric.toggle_motion_blur", VisualsFabricClient.toggleMotionBlurKey);
+        addKeybind("key.visualsfabric.toggle_ao", VisualsFabricClient.toggleAOKey);
+        addKeybind("key.visualsfabric.toggle_sky_effects", VisualsFabricClient.toggleSkyEffectsKey);
+        addKeybind("key.visualsfabric.toggle_enhanced_sun_moon", VisualsFabricClient.toggleEnhancedSunMoonKey);
+        addKeybind("key.visualsfabric.toggle_star_field", VisualsFabricClient.toggleStarFieldKey);
+        addKeybind("key.visualsfabric.toggle_aurora", VisualsFabricClient.toggleAuroraKey);
+        addKeybind("key.visualsfabric.toggle_spotify_hud", VisualsFabricClient.toggleSpotifyHudKey);
+        addKeybind("key.visualsfabric.toggle_spotify_lyrics", VisualsFabricClient.toggleSpotifyLyricsKey);
+        addKeybind("key.visualsfabric.toggle_hit_effects", VisualsFabricClient.toggleHitEffectsKey);
+        addKeybind("key.visualsfabric.toggle_kill_effects", VisualsFabricClient.toggleKillEffectsKey);
+        addKeybind("key.visualsfabric.toggle_performance_mode", VisualsFabricClient.togglePerformanceModeKey);
+    }
+
+    private int nextY = 80;
+    private void addToggle(String key, Supplier<Boolean> getter, Consumer<Boolean> setter) {
+        int y = nextY;
+        nextY += 28;
+        ButtonWidget button = ButtonWidget.builder(Text.translatable(key), btn -> {
+            boolean newVal = !getter.get();
+            setter.accept(newVal);
+            btn.setMessage(Text.literal(newVal ? "§aON" : "§cOFF"));
+        }).dimensions(width / 2 - 150, y, 210, 20).build();
+        button.setMessage(Text.literal(getter.get() ? "§aON" : "§cOFF"));
+        addDrawableChild(button);
+    }
+
+    private void addSlider(String key, Supplier<Float> getter, Consumer<Float> setter, float min, float max, float step) {
+        int y = nextY;
+        nextY += 28;
+        SliderWidget slider = new SliderWidget(width / 2 - 150, y, 300, 20, Text.translatable(key), getter, setter, min, max, step);
+        sliders.add(slider);
+        addDrawableChild(slider);
+    }
+
+    private void addKeybind(String key, KeyBinding keyBinding) {
+        int y = nextY;
+        nextY += 28;
+        ButtonWidget labelBtn = ButtonWidget.builder(Text.translatable(key), btn -> {}).dimensions(width / 2 - 150, y, 210, 20).build();
+        labelBtn.active = false;
+        addDrawableChild(labelBtn);
+
+        ButtonWidget keyBtn = ButtonWidget.builder(Text.literal(keyBinding.getBoundKeyLocalizedText().getString()), btn -> {
+            waitingForKeybind = true;
+            keybindToRebind = keyBinding;
+        }).dimensions(width / 2 + 70, y, 100, 20).build();
+        addDrawableChild(keyBtn);
+    }
+
+    private void resetDefaults() {
         VisualsFabricClient.bloomEnabled = true;
         VisualsFabricClient.chromaticAberrationEnabled = true;
         VisualsFabricClient.filmGrainEnabled = true;
@@ -203,6 +213,22 @@ public class VisualsFabricConfigScreen extends Screen {
         VisualsFabricClient.depthOfFieldEnabled = false;
         VisualsFabricClient.motionBlurEnabled = false;
         VisualsFabricClient.ambientOcclusionEnhanced = true;
+        VisualsFabricClient.skyEffectsEnabled = true;
+        VisualsFabricClient.enhancedSunMoon = true;
+        VisualsFabricClient.starFieldEnabled = true;
+        VisualsFabricClient.auroraEnabled = false;
+        VisualsFabricClient.skyColorGrading = true;
+        VisualsFabricClient.spotifyHudEnabled = false;
+        VisualsFabricClient.spotifyLyricsInSky = false;
+        VisualsFabricClient.hitEffectsEnabled = true;
+        VisualsFabricClient.killEffectsEnabled = true;
+        VisualsFabricClient.hitParticlesEnabled = true;
+        VisualsFabricClient.killParticlesEnabled = true;
+        VisualsFabricClient.hitScreenFlashEnabled = true;
+        VisualsFabricClient.killScreenFlashEnabled = true;
+        VisualsFabricClient.performanceMode = false;
+        VisualsFabricClient.lowQualityShaders = false;
+        VisualsFabricClient.reducedParticles = false;
 
         VisualsFabricClient.bloomIntensity = 0.6f;
         VisualsFabricClient.bloomThreshold = 0.8f;
@@ -213,238 +239,111 @@ public class VisualsFabricConfigScreen extends Screen {
         VisualsFabricClient.contrast = 1.05f;
         VisualsFabricClient.brightness = 1.0f;
         VisualsFabricClient.gamma = 1.0f;
+        VisualsFabricClient.starBrightness = 1.0f;
+        VisualsFabricClient.starDensity = 0.5f;
+        VisualsFabricClient.sunMoonScale = 1.0f;
+        VisualsFabricClient.auroraIntensity = 0.3f;
+        VisualsFabricClient.skyColorIntensity = 0.5f;
+        VisualsFabricClient.spotifyHudScale = 1.0f;
+        VisualsFabricClient.spotifyHudX = 0.5f;
+        VisualsFabricClient.spotifyHudY = 0.9f;
+        VisualsFabricClient.hitEffectIntensity = 1.0f;
+        VisualsFabricClient.killEffectIntensity = 1.0f;
+        VisualsFabricClient.hitScreenFlashIntensity = 0.3f;
+        VisualsFabricClient.killScreenFlashIntensity = 0.5f;
 
-        // Recreate widgets with new values
-        init();
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // Render dark semi-transparent background
-        context.fill(0, 0, width, height, 0xB0000000);
-
-        // Render panel background
-        int panelWidth = 380;
-        int panelHeight = Math.min(height - 40, contentStartY + entries.size() * (entryHeight + spacing) + 60);
-        int panelX = (width - panelWidth) / 2;
-        int panelY = (height - panelHeight) / 2;
-
-        // Draw panel background with rounded corners effect
-        context.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xFF1A1A2E);
-        context.fill(panelX + 1, panelY + 1, panelX + panelWidth - 1, panelY + panelHeight - 1, 0xFF16213E);
-        context.fill(panelX + 2, panelY + 2, panelX + panelWidth - 2, panelY + panelHeight - 2, 0xFF0F0F23);
-
-        // Draw accent line at top
-        context.fill(panelX + 2, panelY + 2, panelX + panelWidth - 2, panelY + 3, 0xFF00D4FF);
-
-        // Draw title
-        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, panelY + 12, 0xFF00D4FF);
-
-        // Draw version
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal("§7v1.0.0 §8| §7AI-Assisted"), width / 2, panelY + 24, 0xFF888888);
-
-        // Render entries
-        int y = panelY + contentStartY;
-        for (ConfigEntry entry : entries) {
-            if (y + entryHeight > panelY + panelHeight - 40) break;
-            entry.render(context, panelX + 10, y, panelWidth - 20, entryHeight, mouseX, mouseY);
-            y += entryHeight + spacing;
-        }
-
-        super.render(context, mouseX, mouseY, delta);
+        nextY = 80;
+        rebuildWidgets();
     }
 
     @Override
     public void close() {
-        if (parent != null) {
-            client.setScreen(parent);
-        } else {
-            client.setScreen(null);
-        }
+        MinecraftClient.getInstance().options.write();
+        super.close();
+        if (parent != null) MinecraftClient.getInstance().setScreen(parent);
     }
 
     @Override
-    public boolean shouldPause() {
-        return false;
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+        int centerX = width / 2;
+        context.drawCenteredTextWithShadow(textRenderer, title, centerX, 12, 0x00FFFF);
+        if (waitingForKeybind) {
+            context.drawCenteredTextWithShadow(textRenderer, Text.literal("§c§lPRESS KEY TO BIND...§r"), centerX, height / 2 - 10, 0xFF0000);
+            context.drawCenteredTextWithShadow(textRenderer, Text.literal("§7Press ESC to cancel§r"), centerX, height / 2 + 10, 0x808080);
+        }
+        for (SliderWidget slider : sliders) {
+            slider.renderSlider(context, mouseX, mouseY, delta);
+        }
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        for (ConfigEntry entry : entries) {
-            if (entry instanceof KeybindEntry keybindEntry) {
-                if (keybindEntry.keyPressed(keyCode, scanCode, modifiers)) {
-                    return true;
-                }
+        if (waitingForKeybind) {
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                waitingForKeybind = false;
+                keybindToRebind = null;
+                return true;
             }
+            // Key rebinding - simplified for now
+            waitingForKeybind = false;
+            keybindToRebind = null;
+            rebuildWidgets();
+            return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    // Config Entry Types
-    abstract static class ConfigEntry {
-        abstract void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY);
-    }
+    static class SliderWidget extends ButtonWidget {
+        private final Supplier<Float> getter;
+        private final Consumer<Float> setter;
+        private final float min, max, step;
+        private boolean dragging = false;
 
-    static class CategoryEntry extends ConfigEntry {
-        final Text text;
-        CategoryEntry(Text text) { this.text = text; }
-        @Override
-        void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY) {
-            context.fill(x, y + height - 1, x + width, y + height, 0xFF00D4FF);
-            context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, text, x, y + 2, 0xFF00D4FF);
+        SliderWidget(int x, int y, int width, int height, Text label, Supplier<Float> getter, Consumer<Float> setter, float min, float max, float step) {
+            super(x, y, width, height, label, btn -> {}, DEFAULT_NARRATION_SUPPLIER);
+            this.getter = getter; this.setter = setter; this.min = min; this.max = max; this.step = step;
+            active = true;
         }
-    }
 
-    static class ToggleEntry extends ConfigEntry {
-        final Text label;
-        final java.util.function.BooleanSupplier getter;
-        final java.util.function.Consumer<Boolean> setter;
-        final Supplier<Float> intensityGetter;
-        final java.util.function.Consumer<Float> intensitySetter;
-        final double min, max;
-        final String format;
-        private ButtonWidget toggleButton;
-        private SliderWidget slider;
-
-        ToggleEntry(Text label, java.util.function.BooleanSupplier getter, java.util.function.Consumer<Boolean> setter,
-                    Supplier<Float> intensityGetter, java.util.function.Consumer<Float> intensitySetter,
-                    double min, double max, String format) {
-            this.label = label;
-            this.getter = getter;
-            this.setter = setter;
-            this.intensityGetter = intensityGetter;
-            this.intensitySetter = intensitySetter;
-            this.min = min;
-            this.max = max;
-            this.format = format;
+        void renderSlider(DrawContext context, int mouseX, int mouseY, float delta) {
+            float value = getter.get();
+            int trackX = getX(); int trackY = getY() + 10; int trackWidth = getWidth(); int trackHeight = 4;
+            context.fill(trackX, trackY, trackX + trackWidth, trackY + trackHeight, 0xFF333333);
+            float percent = (value - min) / (max - min);
+            int fillWidth = (int)(trackWidth * percent);
+            context.fill(trackX, trackY, trackX + fillWidth, trackY + trackHeight, 0xFF00FFFF);
+            int handleX = trackX + fillWidth - 6; int handleY = trackY - 4;
+            context.fill(handleX, handleY, handleX + 12, handleY + 12, 0xFF00FFFF);
+            String valueText = String.format("%.2f", value);
+            context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, valueText, getX() + getWidth() + 10, getY() + 2, 0xAAAAAA);
         }
 
         @Override
-        void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY) {
-            if (toggleButton == null) {
-                toggleButton = ButtonWidget.builder(Text.literal(""), btn -> {
-                    boolean newVal = !getter.getAsBoolean();
-                    setter.accept(newVal);
-                    btn.setMessage(Text.literal(newVal ? "§aON" : "§cOFF"));
-                }).dimensions(x + width - 50, y, 44, height).build();
-                toggleButton.setMessage(Text.literal(getter.getAsBoolean() ? "§aON" : "§cOFF"));
-            } else {
-                toggleButton.setX(x + width - 50);
-                toggleButton.setY(y);
-            }
-            toggleButton.render(context, mouseX, mouseY, 0);
-
-            if (intensityGetter != null && intensitySetter != null && getter.getAsBoolean()) {
-                // SliderWidget constructor: (int x, int y, int width, int height, Text label, double value)
-                slider = new SliderWidget(
-                    x, y + height + 2, width, height,
-                    Text.translatable("gui.visualsfabric.intensity"),
-                    intensityGetter.get()
-                ) {
-                    @Override
-                    protected void applyValue() {
-                        intensitySetter.accept((float)this.value);
-                    }
-                    @Override
-                    protected void updateMessage() {
-                        this.setMessage(Text.literal(String.format(format, this.value)));
-                    }
-                };
-                slider.setMessage(Text.literal(String.format(format, intensityGetter.get())));
-                slider.render(context, mouseX, mouseY, 0);
-            }
-
-            // Label
-            int color = getter.getAsBoolean() ? 0xFFFFFFFF : 0xFFAAAAAA;
-            context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, label, x + 4, y + (height - MinecraftClient.getInstance().textRenderer.fontHeight) / 2, color);
-        }
-    }
-
-    static class SliderOnlyEntry extends ConfigEntry {
-        final Text label;
-        final Supplier<Float> getter;
-        final java.util.function.Consumer<Float> setter;
-        final double min, max;
-        final String format;
-        private SliderWidget slider;
-
-        SliderOnlyEntry(Text label, Supplier<Float> getter, java.util.function.Consumer<Float> setter,
-                        double min, double max, String format) {
-            this.label = label;
-            this.getter = getter;
-            this.setter = setter;
-            this.min = min;
-            this.max = max;
-            this.format = format;
-        }
-
-        @Override
-        void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY) {
-            // SliderWidget constructor: (int x, int y, int width, int height, Text label, double value)
-            slider = new SliderWidget(
-                x, y, width, height,
-                Text.literal(""),
-                getter.get()
-            ) {
-                @Override
-                protected void applyValue() {
-                    setter.accept((float)this.value);
-                }
-                @Override
-                protected void updateMessage() {
-                    this.setMessage(Text.literal(label.getString() + ": " + String.format(format, this.value)));
-                }
-            };
-            slider.setMessage(Text.literal(label.getString() + ": " + String.format(format, getter.get())));
-            slider.render(context, mouseX, mouseY, 0);
-        }
-    }
-
-    static class KeybindEntry extends ConfigEntry {
-        final Text label;
-        final KeyBinding keyBinding;
-        private ButtonWidget button;
-        private boolean waitingForKey = false;
-
-        KeybindEntry(Text label, KeyBinding keyBinding) {
-            this.label = label;
-            this.keyBinding = keyBinding;
-        }
-
-        @Override
-        void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY) {
-            if (button == null) {
-                button = ButtonWidget.builder(Text.literal(""), btn -> {
-                    waitingForKey = true;
-                    btn.setMessage(Text.literal("§e> PRESS KEY <"));
-                }).dimensions(x + width - 100, y, 94, height).build();
-            } else {
-                button.setX(x + width - 100);
-                button.setY(y);
-            }
-
-            if (waitingForKey) {
-                button.setMessage(Text.literal("§e> PRESS KEY <"));
-            } else {
-                String keyName = keyBinding.getBoundKeyLocalizedText().getString();
-                button.setMessage(Text.literal(keyName.isEmpty() ? "§7NONE" : "§f" + keyName));
-            }
-            button.render(context, mouseX, mouseY, 0);
-
-            context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, label, x + 4, y + (height - MinecraftClient.getInstance().textRenderer.fontHeight) / 2, 0xFFFFFFFF);
-        }
-
-        // Handle key input - key remapping not fully implemented in this version
-        boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (waitingForKey && keyCode != GLFW.GLFW_KEY_ESCAPE) {
-                // Key remapping would go here - requires Key object conversion
-                waitingForKey = false;
-                return true;
-            } else if (waitingForKey && keyCode == GLFW.GLFW_KEY_ESCAPE) {
-                waitingForKey = false;
-                return true;
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (isMouseOver(mouseX, mouseY)) {
+                dragging = true; updateValue(mouseX); return true;
             }
             return false;
+        }
+
+        @Override
+        public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+            if (dragging) { updateValue(mouseX); return true; }
+            return false;
+        }
+
+        @Override
+        public boolean mouseReleased(double mouseX, double mouseY, int button) {
+            if (dragging) { dragging = false; return true; }
+            return false;
+        }
+
+        private void updateValue(double mouseX) {
+            float percent = Math.max(0, Math.min(1, (float)((mouseX - getX()) / getWidth())));
+            float newValue = min + percent * (max - min);
+            newValue = Math.round(newValue / step) * step;
+            setter.accept(newValue);
         }
     }
 }
