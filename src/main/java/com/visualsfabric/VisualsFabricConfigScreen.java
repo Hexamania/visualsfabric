@@ -159,6 +159,10 @@ public class VisualsFabricConfigScreen extends Screen {
         addSlider("gui.visualsfabric.speed_fov_multiplier", () -> VisualsFabricClient.speedFovMultiplier, v -> VisualsFabricClient.speedFovMultiplier = v, 0.0f, 5.0f, 0.1f);
         addSlider("gui.visualsfabric.base_fov", () -> VisualsFabricClient.baseFov, v -> VisualsFabricClient.baseFov = v, 30.0f, 110.0f, 1.0f);
 
+        addToggle("gui.visualsfabric.screen_shake", () -> VisualsFabricClient.screenShakeEnabled, v -> VisualsFabricClient.screenShakeEnabled = v);
+        addSlider("gui.visualsfabric.screen_shake_intensity", () -> VisualsFabricClient.screenShakeIntensity, v -> VisualsFabricClient.screenShakeIntensity = v, 0.0f, 2.0f, 0.05f);
+        addSlider("gui.visualsfabric.screen_shake_decay", () -> VisualsFabricClient.screenShakeDecay, v -> VisualsFabricClient.screenShakeDecay = v, 0.5f, 1.0f, 0.01f);
+
         addToggle("gui.visualsfabric.custom_crosshair", () -> VisualsFabricClient.customCrosshairEnabled, v -> VisualsFabricClient.customCrosshairEnabled = v);
         addCycleButton("gui.visualsfabric.crosshair_style", () -> VisualsFabricClient.crosshairStyle, v -> VisualsFabricClient.crosshairStyle = v, 5);
         addSlider("gui.visualsfabric.crosshair_size", () -> VisualsFabricClient.crosshairSize, v -> VisualsFabricClient.crosshairSize = v, 0.5f, 3.0f, 0.1f);
@@ -327,6 +331,10 @@ public class VisualsFabricConfigScreen extends Screen {
         VisualsFabricClient.speedFovEnabled = true;
         VisualsFabricClient.damageIndicatorsEnabled = true;
         VisualsFabricClient.damageNumbersEnabled = false;
+        VisualsFabricClient.screenShakeEnabled = true;
+        VisualsFabricClient.screenShakeIntensity = 0.7f;
+        VisualsFabricClient.screenShakeDecay = 0.95f;
+        VisualsFabricClient.screenShakeTriggerStrength = 0.8f;
         VisualsFabricClient.customCrosshairEnabled = true;
         VisualsFabricClient.crosshairStyle = 0;
         VisualsFabricClient.crosshairSize = 1.0f;

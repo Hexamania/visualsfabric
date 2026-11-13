@@ -246,6 +246,218 @@ public class VisualsFabricClient implements ClientModInitializer {
 
     // Shader preset settings (auto-applied based on preset)
     public static int shaderBloomSamples = 8;
+
+    // ========== NEW FEATURES: Atmosphere & Volumetric ==========
+    // Volumetric Fog / Atmospheric Scattering
+    public static boolean volumetricFogEnabled = true;
+    public static int volumetricFogQuality = 2; // 0=Low, 1=Medium, 2=High, 3=Ultra
+    public static float volumetricFogDensity = 0.015f;
+    public static float volumetricFogHeightFalloff = 0.001f;
+    public static float volumetricFogScattering = 0.9f;
+    public static float volumetricFogExtinction = 0.1f;
+    public static float volumetricFogPhase = 0.7f;
+    public static float volumetricFogSunIntensity = 1.0f;
+    public static float volumetricFogNoiseScale = 0.005f;
+    public static float volumetricFogNoiseSpeed = 0.1f;
+    public static int volumetricFogLayerCount = 32;
+    public static float volumetricFogStartHeight = 0.0f;
+    public static float volumetricFogEndHeight = 256.0f;
+
+    // Heat Haze / Mirage Effect
+    public static boolean heatHazeEnabled = true;
+    public static float heatHazeIntensity = 0.3f;
+    public static float heatHazeHeight = 50.0f;
+    public static float heatHazeFrequency = 0.02f;
+    public static float heatHazeSpeed = 0.5f;
+    public static String heatHazeBiomes = "desert,badlands,nether"; // comma-separated biome IDs
+    public static float heatHazeDistortionScale = 0.15f;
+
+    // ========== NEW FEATURES: Rendering Pipeline ==========
+    // Screen Space Reflections (SSR)
+    public static boolean ssrEnabled = false; // Disabled by default - expensive
+    public static int ssrQuality = 2; // 0=Low, 1=Medium, 2=High, 3=Ultra
+    public static int ssrMaxSteps = 64;
+    public static float ssrThickness = 0.1f;
+    public static float ssrFadeDistance = 50.0f;
+    public static float ssrRoughnessThreshold = 0.3f;
+    public static boolean ssrBinarySearch = true;
+    public static boolean ssrTemporalAccumulation = true;
+    public static boolean ssrDenoiserEnabled = false;
+
+    // Temporal Anti-Aliasing (TAA)
+    public static boolean taaEnabled = false; // Disabled by default - complex integration
+    public static float taaJitterSpread = 0.5f;
+    public static float taaSharpening = 0.3f;
+    public static float taaHistoryWeight = 0.9f;
+    public static float taaVelocityWeight = 0.1f;
+    public static boolean taaClippingEnabled = true;
+    public static boolean taaDithering = true;
+
+    // Dynamic Cubemap Reflections
+    public static boolean cubemapReflectionsEnabled = false;
+    public static int cubemapResolution = 256;
+    public static int cubemapUpdateRate = 2; // frames between updates
+    public static String cubemapReflectiveBlocks = "water,ice,polished_blackstone,amethyst_block"; // comma-separated
+    public static float cubemapRoughnessThreshold = 0.2f;
+    public static boolean cubemapInteriorEnabled = false;
+    public static boolean cubemapSkyReflection = true;
+    public static boolean cubemapEntityReflection = false;
+
+    // Parallax Occlusion Mapping
+    public static boolean parallaxEnabled = false;
+    public static float parallaxHeightScale = 0.1f;
+    public static int parallaxMinSteps = 8;
+    public static int parallaxMaxSteps = 32;
+    public static String parallaxBlockList = "stone,brick,wood,deepslate"; // comma-separated
+    public static boolean parallaxSelfShadowing = true;
+    public static boolean parallaxSilhouetteClipping = true;
+
+    // ========== NEW FEATURES: Weather & Atmosphere ==========
+    // Dynamic Weather Transitions
+    public static boolean weatherTransitionsEnabled = true;
+    public static float transitionDuration = 30.0f; // seconds
+    public static float cloudBuildupSpeed = 0.5f;
+    public static float rainFadeSpeed = 1.0f;
+    public static boolean thunderBuildupEnabled = true;
+    public static boolean fogTransitionEnabled = true;
+    public static boolean weatherParticleTransition = true;
+
+    // Cloud Shadows on Terrain
+    public static boolean cloudShadowsEnabled = true;
+    public static float cloudShadowOpacity = 0.3f;
+    public static float cloudShadowSoftness = 0.5f;
+    public static float cloudShadowSpeed = 1.0f;
+    public static float cloudShadowScale = 1.0f;
+    public static boolean cloudShadowBiomeBlend = true;
+    public static boolean cloudShadowTimeOfDay = true;
+
+    // ========== NEW FEATURES: Water Enhancement ==========
+    // Underwater Distortion & Enhancement
+    public static boolean underwaterDistortionEnabled = true;
+    public static float underwaterRefractionStrength = 0.08f;
+    public static boolean underwaterCausticsEnabled = true;
+    public static float underwaterFogDensity = 0.08f;
+    public static float underwaterColorAbsorption = 0.5f;
+    public static boolean underwaterParticleSuspension = true;
+    public static float underwaterFogColorR = 0.1f;
+    public static float underwaterFogColorG = 0.4f;
+    public static float underwaterFogColorB = 0.6f;
+    public static boolean underwaterBlurEnabled = true;
+    public static float underwaterBlurStrength = 0.5f;
+    public static float underwaterDarkenDepth = 30.0f;
+
+    // ========== NEW FEATURES: Lighting & Effects ==========
+    // Enhanced Beacon Beams
+    public static boolean beaconEnhancedEnabled = true;
+    public static boolean beamVolumetric = true;
+    public static int beamParticleCount = 50;
+    public static boolean beamPulseEnabled = true;
+    public static float beamPulseSpeed = 1.0f;
+    public static boolean beamColorBlending = true;
+    public static boolean beamHeightScaling = true;
+    public static boolean beamLightScattering = true;
+
+    // Portal Enhancement Effects
+    public static boolean portalEnhancedEnabled = true;
+    public static boolean portalDistortionEnabled = true;
+    public static float portalDistortionStrength = 0.15f;
+    public static boolean portalParticlesEnabled = true;
+    public static String portalParticleTypes = "portal,enchant,end_rod"; // comma-separated
+    public static boolean portalDimensionPreview = false;
+    public static int previewSize = 200;
+    public static int previewPosition = 0; // 0=top-left, 1=top-right, 2=bottom-left, 3=bottom-right
+    public static boolean portalSoundVisualization = true;
+    public static boolean portalRippleAnimation = true;
+
+    // ========== NEW FEATURES: Entities & Accessibility ==========
+    // Entity Glint/Outline Customization
+    public static boolean entityGlintEnabled = true;
+    public static float entityGlintSpeed = 1.0f;
+    public static int entityGlintColors = 0; // 0=Default, 1=Rainbow, 2=Custom, 3=Rarity
+    public static boolean spectralGlowEnabled = true;
+    public static float spectralGlowColorR = 0.5f, spectralGlowColorG = 0.0f, spectralGlowColorB = 1.0f, spectralGlowColorA = 0.8f;
+    public static boolean spectralGlowThroughWalls = true;
+    public static boolean teamGlowEnabled = true;
+    public static String teamGlowColors = "red,blue,green,yellow,aqua,purple"; // comma-separated
+    public static int glintRenderMode = 0; // 0=Standard, 1=Pulse, 2=Wave, 3=Scanline
+
+    // Subsurface Scattering for Entities
+    public static boolean sssEnabled = false; // Disabled by default - expensive
+    public static float sssRadius = 0.05f;
+    public static float sssColorR = 1.0f, sssColorG = 0.7f, sssColorB = 0.5f;
+    public static float sssIntensity = 0.5f;
+    public static String sssEntityTypes = "player,cow,pig,sheep,zombie,creeper"; // comma-separated
+    public static boolean sssThicknessMap = false;
+    public static float sssTransmissionR = 1.0f, sssTransmissionG = 0.8f, sssTransmissionB = 0.6f;
+
+    // Spectator Mode X-Ray Vision
+    public static boolean spectatorXRayEnabled = false;
+    public static boolean xRayOres = true;
+    public static boolean xRayChests = true;
+    public static boolean xRayEntities = true;
+    public static boolean xRayStructures = false;
+    public static float xRayRange = 64.0f;
+    public static float xRayOutlineColorR = 1.0f, xRayOutlineColorG = 1.0f, xRayOutlineColorB = 0.0f, xRayOutlineColorA = 0.8f;
+    public static float xRayOutlineWidth = 2.0f;
+    public static int xRayMode = 0; // 0=Outline, 1=Fill, 2=Both, 3=Wireframe
+
+    // Item Highlight/Glow Customization
+    public static boolean itemHighlightEnabled = true;
+    public static boolean highlightDroppedItems = true;
+    public static boolean highlightHeldItems = false;
+    public static boolean highlightItemFrames = true;
+    public static boolean highlightByRarity = true;
+    public static int highlightMode = 0; // 0=Glow, 1=Outline, 2=Pulse, 3=Both
+    public static String rarityColors = "common:white,uncommon:yellow,rare:blue,epic:purple,legendary:orange"; // format: rarity:color
+    public static String highlightTags = "minecraft:ores,minecraft:enchantable"; // comma-separated tags
+    public static boolean highlightPulseEnabled = true;
+    public static float highlightRange = 32.0f;
+    public static boolean highlightThroughWalls = false;
+
+    // ========== NEW FEATURES: UI & Accessibility ==========
+    // Menu/Inventory Background Blur
+    public static boolean menuBlurEnabled = true;
+    public static int menuBlurRadius = 8;
+    public static boolean menuBlurAnimation = true;
+    public static float menuBlurFadeSpeed = 5.0f;
+    public static boolean menuBlurOnlyInGame = true;
+    public static float menuBlurOverlayColorR = 0.0f, menuBlurOverlayColorG = 0.0f, menuBlurOverlayColorB = 0.0f;
+    public static float menuBlurOverlayAlpha = 0.3f;
+
+    // Color Blind Accessibility Modes
+    public static int colorBlindMode = 0; // 0=None, 1=Protanopia, 2=Deuteranopia, 3=Tritanopia, 4=Achromatopsia
+    public static float colorBlindSeverity = 1.0f;
+    public static boolean daltonizeEnabled = false;
+    public static int daltonizeType = 0; // 0=Simulation, 1=Correction
+    public static boolean highContrastMode = false;
+    public static boolean uiColorBlindSafe = true;
+
+    // HDR/Bloom Threshold Per-Biome
+    public static boolean hdrEnabled = false; // Disabled by default - needs HDR framebuffer
+    public static int hdrPreset = 0; // 0=Standard, 1=Filmic, 2=Photorealistic, 3=Custom
+    public static float hdrExposure = 1.0f;
+    public static boolean hdrAutoExposure = true;
+    public static float hdrExposureSpeed = 2.0f;
+    public static float hdrMinExposure = 0.1f;
+    public static float hdrMaxExposure = 4.0f;
+    public static boolean hdrHistogramEnabled = false;
+
+    // ========== NEW FEATURES: Dimensions ==========
+    // End/Nether Dimension Visual Overhauls
+    public static boolean endOverhaulEnabled = true;
+    public static boolean endVoidFogEnabled = true;
+    public static float endVoidFogColorR = 0.0f, endVoidFogColorG = 0.0f, endVoidFogColorB = 0.05f;
+    public static float endVoidFogDensity = 0.002f;
+    public static boolean endStarfieldEnhanced = true;
+    public static boolean endIslandGlow = true;
+    public static boolean endParticleEffects = true;
+
+    public static boolean netherOverhaulEnabled = true;
+    public static boolean netherFogLayers = true;
+    public static boolean netherAshParticles = true;
+    public static boolean netherHeatHaze = true;
+    public static boolean netherGlowFungus = true;
+    public static boolean netherCeilingFog = true;
     public static int shaderChromaticSamples = 4;
     public static int shaderDofSamples = 16;
     public static int shaderMotionBlurSamples = 8;
@@ -353,6 +565,12 @@ public class VisualsFabricClient implements ClientModInitializer {
     public static float damageIndicatorDuration = 2.0f;
     public static float damageIndicatorSize = 1.0f;
 
+    // Camera screen shake
+    public static boolean screenShakeEnabled = true;
+    public static float screenShakeIntensity = 0.7f;
+    public static float screenShakeDecay = 0.95f;
+    public static float screenShakeTriggerStrength = 0.8f;
+    private static float currentScreenShake = 0.0f;
     private static float effectTime = 0f;
     private static float hitFlashTimer = 0f;
     private static float killFlashTimer = 0f;
@@ -362,6 +580,7 @@ public class VisualsFabricClient implements ClientModInitializer {
     // Damage indicator tracking
     private static final java.util.List<DamageIndicator> damageIndicators = new java.util.ArrayList<>();
     private static float lastHealth = 20f;
+    private static java.util.UUID lastTrackedPlayer;
 
     public static String currentTrackName = "Unknown Track";
     public static String currentArtistName = "Unknown Artist";
@@ -543,10 +762,98 @@ public class VisualsFabricClient implements ClientModInitializer {
         // New: Shader Quality Presets
         cycleShaderPresetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_shader_preset", GLFW.GLFW_KEY_F4, "category.visualsfabric.performance"));
         toggleCustomSettingsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_custom_shader_settings", GLFW.GLFW_KEY_F5, "category.visualsfabric.performance"));
+
+        // ========== NEW KEYBINDINGS REGISTRATION ==========
+        // Atmosphere
+        toggleVolumetricFogKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_volumetric_fog", GLFW.GLFW_KEY_O, "category.visualsfabric.atmosphere"));
+        cycleVolumetricFogQualityKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_volumetric_fog_quality", GLFW.GLFW_KEY_P, "category.visualsfabric.atmosphere"));
+        toggleHeatHazeKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_heat_haze", GLFW.GLFW_KEY_H, "category.visualsfabric.atmosphere"));
+
+        // Rendering Pipeline
+        toggleSSRKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_ssr", GLFW.GLFW_KEY_R, "category.visualsfabric.rendering"));
+        cycleSSRQualityKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_ssr_quality", GLFW.GLFW_KEY_T, "category.visualsfabric.rendering"));
+        toggleTAAKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_taa", GLFW.GLFW_KEY_Y, "category.visualsfabric.rendering"));
+        toggleCubemapReflectionsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_cubemap_reflections", GLFW.GLFW_KEY_U, "category.visualsfabric.rendering"));
+        toggleParallaxKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_parallax", GLFW.GLFW_KEY_I, "category.visualsfabric.rendering"));
+
+        // Weather
+        toggleWeatherTransitionsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_weather_transitions", GLFW.GLFW_KEY_N, "category.visualsfabric.weather"));
+        toggleCloudShadowsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_cloud_shadows", GLFW.GLFW_KEY_M, "category.visualsfabric.weather"));
+
+        // Water
+        toggleUnderwaterDistortionKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_underwater_distortion", GLFW.GLFW_KEY_K, "category.visualsfabric.water"));
+        toggleUnderwaterCausticsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_underwater_caustics", GLFW.GLFW_KEY_L, "category.visualsfabric.water"));
+
+        // Lighting
+        toggleBeaconEffectsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_beacon_effects", GLFW.GLFW_KEY_COMMA, "category.visualsfabric.lighting"));
+        togglePortalEffectsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_portal_effects", GLFW.GLFW_KEY_PERIOD, "category.visualsfabric.lighting"));
+
+        // Entities
+        toggleEntityGlintKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_entity_glint", GLFW.GLFW_KEY_SLASH, "category.visualsfabric.entities"));
+        cycleGlintModeKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_glint_mode", GLFW.GLFW_KEY_SEMICOLON, "category.visualsfabric.entities"));
+        toggleSSSKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_sss", GLFW.GLFW_KEY_APOSTROPHE, "category.visualsfabric.entities"));
+        toggleSpectatorXRayKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_spectator_xray", GLFW.GLFW_KEY_LEFT_BRACKET, "category.visualsfabric.entities"));
+        cycleXRayModeKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_xray_mode", GLFW.GLFW_KEY_RIGHT_BRACKET, "category.visualsfabric.entities"));
+        toggleItemHighlightKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_item_highlight", GLFW.GLFW_KEY_BACKSLASH, "category.visualsfabric.entities"));
+        cycleHighlightModeKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_highlight_mode", GLFW.GLFW_KEY_GRAVE_ACCENT, "category.visualsfabric.entities"));
+
+        // UI & Accessibility
+        toggleMenuBlurKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_menu_blur", GLFW.GLFW_KEY_F1, "category.visualsfabric.accessibility"));
+        cycleColorBlindModeKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_color_blind_mode", GLFW.GLFW_KEY_F2, "category.visualsfabric.accessibility"));
+        toggleHDRKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_hdr", GLFW.GLFW_KEY_F3, "category.visualsfabric.accessibility"));
+        cycleHDRPresetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.cycle_hdr_preset", GLFW.GLFW_KEY_F4, "category.visualsfabric.accessibility"));
+
+        // Dimensions
+        toggleEndOverhaulKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_end_overhaul", GLFW.GLFW_KEY_F5, "category.visualsfabric.dimensions"));
+        toggleNetherOverhaulKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.visualsfabric.toggle_nether_overhaul", GLFW.GLFW_KEY_F6, "category.visualsfabric.dimensions"));
     }
 
     public static KeyBinding cycleShaderPresetKey;
     public static KeyBinding toggleCustomSettingsKey;
+
+    // ========== NEW KEYBINDINGS ==========
+    // Atmosphere
+    public static KeyBinding toggleVolumetricFogKey;
+    public static KeyBinding cycleVolumetricFogQualityKey;
+    public static KeyBinding toggleHeatHazeKey;
+
+    // Rendering Pipeline
+    public static KeyBinding toggleSSRKey;
+    public static KeyBinding cycleSSRQualityKey;
+    public static KeyBinding toggleTAAKey;
+    public static KeyBinding toggleCubemapReflectionsKey;
+    public static KeyBinding toggleParallaxKey;
+
+    // Weather
+    public static KeyBinding toggleWeatherTransitionsKey;
+    public static KeyBinding toggleCloudShadowsKey;
+
+    // Water
+    public static KeyBinding toggleUnderwaterDistortionKey;
+    public static KeyBinding toggleUnderwaterCausticsKey;
+
+    // Lighting
+    public static KeyBinding toggleBeaconEffectsKey;
+    public static KeyBinding togglePortalEffectsKey;
+
+    // Entities
+    public static KeyBinding toggleEntityGlintKey;
+    public static KeyBinding cycleGlintModeKey;
+    public static KeyBinding toggleSSSKey;
+    public static KeyBinding toggleSpectatorXRayKey;
+    public static KeyBinding cycleXRayModeKey;
+    public static KeyBinding toggleItemHighlightKey;
+    public static KeyBinding cycleHighlightModeKey;
+
+    // UI & Accessibility
+    public static KeyBinding toggleMenuBlurKey;
+    public static KeyBinding cycleColorBlindModeKey;
+    public static KeyBinding toggleHDRKey;
+    public static KeyBinding cycleHDRPresetKey;
+
+    // Dimensions
+    public static KeyBinding toggleEndOverhaulKey;
+    public static KeyBinding toggleNetherOverhaulKey;
 
     private void registerTickEvents() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -554,6 +861,13 @@ public class VisualsFabricClient implements ClientModInitializer {
             if (effectTime > 10000f) effectTime = 0f;
             if (hitFlashTimer > 0) hitFlashTimer -= 0.016f;
             if (killFlashTimer > 0) killFlashTimer -= 0.016f;
+            if (!screenShakeEnabled) {
+                currentScreenShake = 0.0f;
+            } else if (currentScreenShake > 0.0001f) {
+                currentScreenShake *= screenShakeDecay;
+            } else {
+                currentScreenShake = 0.0f;
+            }
 
             // Update player trails and afterimages
             updatePlayerTrails(client);
@@ -691,6 +1005,50 @@ public class VisualsFabricClient implements ClientModInitializer {
                 if (customSettings) shaderPreset = ShaderPreset.CUSTOM;
                 sendChatFeedback("Custom Shader Settings", customSettings);
             }
+
+            // ========== NEW KEYBINDINGS HANDLING ==========
+            // Atmosphere
+            while (toggleVolumetricFogKey.wasPressed()) { volumetricFogEnabled = !volumetricFogEnabled; sendChatFeedback("Volumetric Fog", volumetricFogEnabled); }
+            while (cycleVolumetricFogQualityKey.wasPressed()) { volumetricFogQuality = (volumetricFogQuality + 1) % 4; sendChatFeedback("Volumetric Fog Quality", getVolumetricFogQualityName(volumetricFogQuality)); }
+            while (toggleHeatHazeKey.wasPressed()) { heatHazeEnabled = !heatHazeEnabled; sendChatFeedback("Heat Haze", heatHazeEnabled); }
+
+            // Rendering Pipeline
+            while (toggleSSRKey.wasPressed()) { ssrEnabled = !ssrEnabled; sendChatFeedback("Screen Space Reflections", ssrEnabled); }
+            while (cycleSSRQualityKey.wasPressed()) { ssrQuality = (ssrQuality + 1) % 4; sendChatFeedback("SSR Quality", getSSRQualityName(ssrQuality)); }
+            while (toggleTAAKey.wasPressed()) { taaEnabled = !taaEnabled; sendChatFeedback("Temporal Anti-Aliasing", taaEnabled); }
+            while (toggleCubemapReflectionsKey.wasPressed()) { cubemapReflectionsEnabled = !cubemapReflectionsEnabled; sendChatFeedback("Cubemap Reflections", cubemapReflectionsEnabled); }
+            while (toggleParallaxKey.wasPressed()) { parallaxEnabled = !parallaxEnabled; sendChatFeedback("Parallax Occlusion Mapping", parallaxEnabled); }
+
+            // Weather
+            while (toggleWeatherTransitionsKey.wasPressed()) { weatherTransitionsEnabled = !weatherTransitionsEnabled; sendChatFeedback("Weather Transitions", weatherTransitionsEnabled); }
+            while (toggleCloudShadowsKey.wasPressed()) { cloudShadowsEnabled = !cloudShadowsEnabled; sendChatFeedback("Cloud Shadows", cloudShadowsEnabled); }
+
+            // Water
+            while (toggleUnderwaterDistortionKey.wasPressed()) { underwaterDistortionEnabled = !underwaterDistortionEnabled; sendChatFeedback("Underwater Distortion", underwaterDistortionEnabled); }
+            while (toggleUnderwaterCausticsKey.wasPressed()) { underwaterCausticsEnabled = !underwaterCausticsEnabled; sendChatFeedback("Underwater Caustics", underwaterCausticsEnabled); }
+
+            // Lighting
+            while (toggleBeaconEffectsKey.wasPressed()) { beaconEnhancedEnabled = !beaconEnhancedEnabled; sendChatFeedback("Beacon Effects", beaconEnhancedEnabled); }
+            while (togglePortalEffectsKey.wasPressed()) { portalEnhancedEnabled = !portalEnhancedEnabled; sendChatFeedback("Portal Effects", portalEnhancedEnabled); }
+
+            // Entities
+            while (toggleEntityGlintKey.wasPressed()) { entityGlintEnabled = !entityGlintEnabled; sendChatFeedback("Entity Glint", entityGlintEnabled); }
+            while (cycleGlintModeKey.wasPressed()) { glintRenderMode = (glintRenderMode + 1) % 4; sendChatFeedback("Glint Mode", getGlintModeName(glintRenderMode)); }
+            while (toggleSSSKey.wasPressed()) { sssEnabled = !sssEnabled; sendChatFeedback("Subsurface Scattering", sssEnabled); }
+            while (toggleSpectatorXRayKey.wasPressed()) { spectatorXRayEnabled = !spectatorXRayEnabled; sendChatFeedback("Spectator X-Ray", spectatorXRayEnabled); }
+            while (cycleXRayModeKey.wasPressed()) { xRayMode = (xRayMode + 1) % 4; sendChatFeedback("X-Ray Mode", getXRayModeName(xRayMode)); }
+            while (toggleItemHighlightKey.wasPressed()) { itemHighlightEnabled = !itemHighlightEnabled; sendChatFeedback("Item Highlight", itemHighlightEnabled); }
+            while (cycleHighlightModeKey.wasPressed()) { highlightMode = (highlightMode + 1) % 4; sendChatFeedback("Highlight Mode", getHighlightModeName(highlightMode)); }
+
+            // UI & Accessibility
+            while (toggleMenuBlurKey.wasPressed()) { menuBlurEnabled = !menuBlurEnabled; sendChatFeedback("Menu Blur", menuBlurEnabled); }
+            while (cycleColorBlindModeKey.wasPressed()) { colorBlindMode = (colorBlindMode + 1) % 5; sendChatFeedback("Color Blind Mode", getColorBlindModeName(colorBlindMode)); }
+            while (toggleHDRKey.wasPressed()) { hdrEnabled = !hdrEnabled; sendChatFeedback("HDR", hdrEnabled); }
+            while (cycleHDRPresetKey.wasPressed()) { hdrPreset = (hdrPreset + 1) % 4; sendChatFeedback("HDR Preset", getHDRPresetName(hdrPreset)); }
+
+            // Dimensions
+            while (toggleEndOverhaulKey.wasPressed()) { endOverhaulEnabled = !endOverhaulEnabled; sendChatFeedback("End Overhaul", endOverhaulEnabled); }
+            while (toggleNetherOverhaulKey.wasPressed()) { netherOverhaulEnabled = !netherOverhaulEnabled; sendChatFeedback("Nether Overhaul", netherOverhaulEnabled); }
         });
     }
 
@@ -808,6 +1166,78 @@ public class VisualsFabricClient implements ClientModInitializer {
             case LOW -> "Low";
             case PERFORMANCE -> "Performance";
             case CUSTOM -> "Custom";
+        };
+    }
+
+    // ========== NEW GETTER METHODS ==========
+    private String getVolumetricFogQualityName(int quality) {
+        return switch (quality) {
+            case 0 -> "Low";
+            case 1 -> "Medium";
+            case 2 -> "High";
+            case 3 -> "Ultra";
+            default -> "Medium";
+        };
+    }
+
+    private String getSSRQualityName(int quality) {
+        return switch (quality) {
+            case 0 -> "Low";
+            case 1 -> "Medium";
+            case 2 -> "High";
+            case 3 -> "Ultra";
+            default -> "Medium";
+        };
+    }
+
+    private String getGlintModeName(int mode) {
+        return switch (mode) {
+            case 0 -> "Standard";
+            case 1 -> "Pulse";
+            case 2 -> "Wave";
+            case 3 -> "Scanline";
+            default -> "Standard";
+        };
+    }
+
+    private String getXRayModeName(int mode) {
+        return switch (mode) {
+            case 0 -> "Outline";
+            case 1 -> "Fill";
+            case 2 -> "Both";
+            case 3 -> "Wireframe";
+            default -> "Outline";
+        };
+    }
+
+    private String getHighlightModeName(int mode) {
+        return switch (mode) {
+            case 0 -> "Glow";
+            case 1 -> "Outline";
+            case 2 -> "Pulse";
+            case 3 -> "Both";
+            default -> "Glow";
+        };
+    }
+
+    private String getColorBlindModeName(int mode) {
+        return switch (mode) {
+            case 0 -> "None";
+            case 1 -> "Protanopia";
+            case 2 -> "Deuteranopia";
+            case 3 -> "Tritanopia";
+            case 4 -> "Achromatopsia";
+            default -> "None";
+        };
+    }
+
+    private String getHDRPresetName(int preset) {
+        return switch (preset) {
+            case 0 -> "Standard";
+            case 1 -> "Filmic";
+            case 2 -> "Photorealistic";
+            case 3 -> "Custom";
+            default -> "Standard";
         };
     }
 
@@ -1853,23 +2283,39 @@ public class VisualsFabricClient implements ClientModInitializer {
 
     // New: Damage Indicators
     private void updateDamageIndicators(MinecraftClient client) {
-        if (!damageIndicatorsEnabled || client.player == null) return;
+        if (client.player == null) {
+            lastTrackedPlayer = null;
+            damageIndicators.clear();
+            return;
+        }
+
+        java.util.UUID playerId = client.player.getUuid();
+        if (!playerId.equals(lastTrackedPlayer)) {
+            lastTrackedPlayer = playerId;
+            lastHealth = client.player.getHealth();
+            damageIndicators.clear();
+            return;
+        }
 
         float currentHealth = client.player.getHealth();
         if (currentHealth < lastHealth) {
             float damage = lastHealth - currentHealth;
-            // Add damage indicator in direction of last damage source
-            // For simplicity, add at random angle around player
-            double angle = Math.random() * Math.PI * 2;
-            damageIndicators.add(new DamageIndicator(angle, damage, damageIndicatorDuration));
+            triggerScreenShake(Math.min(damage / 5.0f, 1.0f));
+            if (damageIndicatorsEnabled) {
+                double angle = Math.random() * Math.PI * 2;
+                damageIndicators.add(new DamageIndicator(angle, damage, damageIndicatorDuration));
+            }
         }
         lastHealth = currentHealth;
 
-        // Update existing indicators
-        damageIndicators.removeIf(indicator -> {
-            indicator.life -= 0.016f;
-            return indicator.life <= 0;
-        });
+        if (damageIndicatorsEnabled) {
+            damageIndicators.removeIf(indicator -> {
+                indicator.life -= 0.016f;
+                return indicator.life <= 0;
+            });
+        } else {
+            damageIndicators.clear();
+        }
     }
 
     private void renderDamageIndicators(MatrixStack matrices, int width, int height) {
@@ -2585,8 +3031,27 @@ public class VisualsFabricClient implements ClientModInitializer {
         client.options.getFov().setValue(newFov);
     }
 
+    public static void triggerScreenShake(float strength) {
+        if (!screenShakeEnabled) return;
+        currentScreenShake = Math.max(currentScreenShake, Math.max(0.0f, strength) * screenShakeTriggerStrength);
+    }
+
+    public static Vec3d getScreenShakeOffset() {
+        if (!screenShakeEnabled || currentScreenShake <= 0.0001f) {
+            return Vec3d.ZERO;
+        }
+
+        double amplitude = currentScreenShake * screenShakeIntensity * 0.08;
+        return new Vec3d(
+            Math.sin(effectTime * 43.0f) * amplitude,
+            Math.sin(effectTime * 57.0f) * amplitude * 0.6,
+            Math.sin(effectTime * 37.0f) * amplitude * 0.4
+        );
+    }
+
     public static void onHitEntity(Vec3d hitPos) {
         if (hitEffectsEnabled) { hitFlashTimer = 0.2f; lastHitPos = hitPos; if (hitParticlesEnabled && !performanceMode) spawnHitParticles(hitPos); }
+        triggerScreenShake(1.0f);
     }
     public static void onKillEntity(Vec3d killPos) {
         if (killEffectsEnabled) { killFlashTimer = 0.3f; lastKillPos = killPos; if (killParticlesEnabled && !performanceMode) spawnKillParticles(killPos); }

@@ -113,6 +113,11 @@
   "gui.visualsfabric.speed_fov_multiplier": "Speed FOV Multiplier",
   "gui.visualsfabric.base_fov": "Base FOV",
 
+  "gui.visualsfabric.screen_shake": "Screen Shake",
+  "gui.visualsfabric.screen_shake.tooltip": "Adds subtle camera shake for impacts and motion bursts",
+  "gui.visualsfabric.screen_shake_intensity": "Screen Shake Intensity",
+  "gui.visualsfabric.screen_shake_decay": "Screen Shake Decay",
+
   "gui.visualsfabric.custom_crosshair": "Custom Crosshair",
   "gui.visualsfabric.custom_crosshair.tooltip": "Enables custom crosshair styles",
   "gui.visualsfabric.crosshair_style": "Crosshair Style",
